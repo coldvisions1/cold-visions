@@ -98,8 +98,9 @@ footer{margin-top:27px;color:#8a665a;font-size:10px;letter-spacing:3px}
 .role.glitch .rw{animation:rwjit .34s steps(3,end) 1}
 .role.glitch .rt{filter:hue-rotate(20deg) saturate(1.6) contrast(1.15)}
 @keyframes rwjit{0%{transform:translate(0,0)}25%{transform:translate(-1.5px,1px)}50%{transform:translate(2px,-1px)}75%{transform:translate(-1px,0)}100%{transform:translate(0,0)}}
-/* название трека под ползунком громкости */
-.track{margin-top:10px;text-align:center;font-size:11px;font-weight:400;letter-spacing:.06em;color:rgba(255,255,255,.42);text-shadow:0 1px 14px #000c;pointer-events:none;user-select:none;-webkit-user-select:none;animation:introFade 1.2s ease 1.5s backwards}
+/* название трека под ползунком громкости — клик открывает песню на YouTube */
+.track{display:block;margin:10px auto 0;width:fit-content;text-align:center;font-size:11px;font-weight:400;letter-spacing:.06em;color:rgba(255,255,255,.42);text-shadow:0 1px 14px #000c;text-decoration:none;cursor:pointer;transition:color .25s,opacity .25s,filter .25s;animation:introFade 1.2s ease 1.5s backwards}
+.track:hover,.track:focus-visible{color:rgba(255,255,255,.78);filter:drop-shadow(0 0 8px rgba(255,255,255,.25))}
 @media(max-height:640px){.track{margin-top:7px;font-size:10px}}
 @media(max-width:380px){.track{letter-spacing:.04em}}
 </style>
@@ -145,7 +146,7 @@ footer{margin-top:27px;color:#8a665a;font-size:10px;letter-spacing:3px}
   </button>
   <input type="range" id="range" min="0" max="100" step="1" value="30" aria-label="Громкость">
 </div>
-<div class="track" aria-label="Сейчас играет: Ecco2k – Sky Burial">Ecco2k – Sky Burial</div>
+<a class="track" href="https://www.youtube.com/watch?v=Cdi2BECVxBk" target="_blank" rel="noopener noreferrer" aria-label="Открыть песню Ecco2k – Sky Burial на YouTube">Ecco2k – Sky Burial</a>
 </main>
 <script>
 (function(){
@@ -171,9 +172,17 @@ footer{margin-top:27px;color:#8a665a;font-size:10px;letter-spacing:3px}
   function consume(e){e.preventDefault();e.stopImmediatePropagation()}
   window.addEventListener('pointerdown',function(e){if(gate&&e.pointerType==='mouse')unlock()},true);
   window.addEventListener('mousedown',function(e){if(gate)consume(e)},true);
-  window.addEventListener('click',function(e){if(gate){gate=false;consume(e);unlock()}},true);
+  window.addEventListener('click',function(e){
+    var onTrack=e.target&&e.target.closest&&e.target.closest('a.track');
+    if(gate){gate=false;consume(e);unlock();if(onTrack){muted=true;apply()}return}
+    if(onTrack){muted=true;apply()}
+  },true);
   window.addEventListener('touchstart',function(e){if(gate)e.preventDefault()},{capture:true,passive:false});
-  window.addEventListener('touchend',function(e){if(gate){gate=false;consume(e);unlock()}},{capture:true,passive:false});
+  window.addEventListener('touchend',function(e){
+    var onTrack=e.target&&e.target.closest&&e.target.closest('a.track');
+    if(gate){gate=false;consume(e);unlock()}
+    if(onTrack){muted=true;apply()}
+  },{capture:true,passive:false});
   window.addEventListener('keydown',function(){gate=false;unlock()},true);
   r.addEventListener('input',function(){level=+r.value;if(level>0)muted=false;unlocked=true;apply()});
   ['pointerdown','pointerup','mousedown','click','touchstart','touchend'].forEach(function(e){w.addEventListener(e,function(ev){ev.stopPropagation()})});
