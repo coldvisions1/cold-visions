@@ -132,11 +132,11 @@ footer{margin-top:27px;color:#8a665a;font-size:10px;letter-spacing:3px}
 <script>
 (function(){
   var v=document.getElementById('bgv'),r=document.getElementById('range'),b=document.getElementById('mute'),w=document.getElementById('vol');
-  var level=20,muted=false,unlocked=false;
+  var level=10,muted=false,unlocked=false;
   try{var a=localStorage.getItem('cv-vol'),c=localStorage.getItem('cv-muted');if(a!==null&&!isNaN(+a))level=Math.min(100,Math.max(0,+a));if(c==='1')muted=true}catch(e){}
   r.value=level;
   function apply(){
-    v.volume=Math.pow(level/100,2);            // мягкая кривая: 30% на слайдере ≈ 9% реальной громкости
+    v.volume=Math.pow(level/100,2);            
     var silent=muted||!unlocked||level===0;
     v.muted=silent;
     w.classList.toggle('off',silent);
